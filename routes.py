@@ -1,21 +1,11 @@
 from flask import Flask, render_template, json, request, jsonify
-
-import matplotlib
 import numpy as np
-
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-plt.ioff()
-
-from threading import Lock
-lock = Lock()
 import pandas as pd
 
 #from GetCityWeather import GetCityWeather
 
 # Setting up matplotlib sytles using BMH
 s = json.load(open("./static/bmh_matplotlibrc.json"))
-matplotlib.rcParams.update(s)
 
 airport_data = pd.read_csv('./airports.csv',header=0,quotechar='"',sep=',',na_values = ['NA', '-', '.', ''])
 
@@ -31,7 +21,7 @@ app.logger.addHandler(file_handler)
 
 @app.route('/')
 def home():
-    return render_template('index.html',deplat=37.772323,deplong=-122.214897,arrlat=21.291982,arrlong=-157.821856)
+    return render_template('index.html')
 
 
 @app.route('/query', methods=['POST'])
