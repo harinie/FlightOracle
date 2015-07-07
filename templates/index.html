@@ -1,23 +1,53 @@
 {% extends "layout.html" %}
 {% block content %}
-<style> 
-div #sidebar
-{
-  border:2px solid #a1a1a1;
-  padding:10px 20px; 
-  border-radius:15px;
+<script>
+function validDate(date, theInput) {
+   
+	dates = getTodaysDate();
+    todayDate = dates[0];
+    threefromnow = dates[1];
+	if (date < todayDate)
+		theInput.value = todayDate;
+        
+    if (date > threefromnow)
+		theInput.value = todayDate;
 }
-</style>
+function maxDate() {
+   
+	dates = getTodaysDate();
+    todayDate = dates[0];
+    threefromnow = dates[1];
+	return threefromnow
+}
+
+function getTodaysDate(){
+	date = new Date();
+	day = date.getDate();
+    day2 = day + 3;
+	month = date.getMonth() + 1;
+	year = date.getFullYear();
+
+	if (month < 10) month = "0" + month;
+	if (day < 10) day = "0" + day;
+    if (day2 < 10) day2 = "0" + day2;
+
+	today = year + "-" + month + "-" + day;	
+	threefromnow = year + "-" + month + "-" + day2;	
+	return [today,threefromnow];
+}
+</script>
 <div id="sidebar">
-  <span>Input Flight Information</span>
+  <span  style="font-family: 'Purisa'">Input Flight Information</span>
   <br/>
-  <input type="text" name="departure" value="Dep" size=10></input>
+  <input type="text" name="departure" value="Dep" size=10  style="font-family: 'Purisa'"></input>
   <br/>
-  <input type="text" name="arrival" value="Arr" size=10></input>
+  <input type="text" name="arrival" value="Arr" size=10  style="font-family: 'Purisa'"></input>
   <br/>
-  <input type="date" name="depdate" value="07-01-2015"></input>
+  <input type="date" name="depdate" oninput="validDate(this.value, this)" style="font-family: 'Purisa'"></input>
   <br/>
-  <button type="button" id="query">GO</button>
+  <input type="time" name="deptime" style="font-family: 'Purisa'"></input>
+  <br/>
+  <button type="button" id="query"  style="font-family: 'Purisa'">GO</button>
   <br/>
 </div>
 <div id="loading-div-background">
@@ -26,7 +56,21 @@ div #sidebar
     <h3 style="color:gray;font-weight:normal;">Loading....</h3>
   </div>
 </div>
-<div id="map-canvas"  style="margin:0 auto; padding: 0 auto; width:70%; height:600px;"></div>
+<div id="map-canvas"  style="margin:0 auto; padding: 0 auto; width:60%; height:400px;"></div>
+<br>
+<div class="boxed" id="depbox" style="font-family: 'Purisa';border:1px dotted black;padding:1em; width:40%; float:left;"> 
+</div>
+<div class="boxed" id="arrbox" style="font-family: 'Purisa';border:1px dotted black;padding:1em; width:40%; float:left;">
+</div>
+<br>
+<br>
+<br>
+<br>
+<div class="boxed" id="cancellation" style="color:red;font-family: 'Purisa';border:1px dotted black;padding:1em;width:100%;">
+</div>
+<br>
+<div class="boxed" id="delay"  style="color:red;font-family: 'Purisa';border:1px dotted black;padding:1em;width:100%;">
+</div>
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
 <script type="text/javascript">  
     var map; 
@@ -60,11 +104,16 @@ $("#loading-div-background").css({ opacity: 0.7 });
 $("#query").click(function() {  
 
   $("#loading-div-background").show();
-  $("#map-canvas").hide();
+  $("#depwe").hide();
+  $("#arrwe").hide();
+  $("#cancellation").hide();
+  $("#delay").hide();
+  
   var departure = $('input:text[name=departure]').val();
   var arrival = $('input:text[name=arrival]').val();
   var depdate = $('input[name=depdate]').val();
-  var qu = {"departure":departure,"arrival":arrival,'depdate':depdate}
+  var deptime = $('input[name=deptime]').val();
+  var qu = {"departure":departure,"arrival":arrival,'depdate':depdate,'deptime':deptime}
   $.ajax({
     type: "POST",
     async:true,
@@ -77,7 +126,11 @@ $("#query").click(function() {
      var deplat=data.deplat
      var deplong = data.deplong
      var arrlat = data.arrlat
-      var arrlong = data.arrlong
+     var arrlong = data.arrlong
+     var depwe = data.depwe
+     var arrwe = data.arrwe
+     var cancellation = data.cancellation
+     var delay = data.delay
 
   var flightPlanCoordinates = [
     new google.maps.LatLng(deplat,deplong),
@@ -92,10 +145,24 @@ $("#query").click(function() {
   });
 
   flightPath.setMap(map);
-
+ 
+   var container = $("#depbox");
+     container.html(depwe);
+     
+   var container = $("#arrbox");
+     container.html(arrwe);
+     
+     var container = $("#cancellation");
+     container.html(cancellation);
+     
+     var container = $("#delay");
+     container.html(delay);
 
      $("#loading-div-background").hide();      
-     $("#map-canvas").show();
+     $("#depwe").show();
+     $("#arrwe").show();
+     $("#cancellation").show();
+     $("#delay").show();
    },
    dataType: "html"
  });
