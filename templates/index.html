@@ -39,13 +39,15 @@ function getTodaysDate(){
 <div id="sidebar">
   <span  style="font-family: 'Purisa'">Input Flight Information</span>
   <br/>
-  <input type="text" name="departure" value="Dep" size=10  style="font-family: 'Purisa'"></input>
+  <input type="text" name="departure" value="PHL" size=10  style="font-family: 'Purisa'"></input>
   <br/>
-  <input type="text" name="arrival" value="Arr" size=10  style="font-family: 'Purisa'"></input>
+  <input type="text" name="arrival" value="ORD" size=10  style="font-family: 'Purisa'"></input>
   <br/>
   <input type="date" name="depdate" oninput="validDate(this.value, this)" style="font-family: 'Purisa'"></input>
   <br/>
-  <input type="time" name="deptime" style="font-family: 'Purisa'"></input>
+  <input type="time" name="deptime" value="12:00:AM/PM" style="font-family: 'Purisa'"></input>
+  <br/>
+  <input type="text" name="carrier" value="US" style="font-family: 'Purisa'"></input>
   <br/>
   <button type="button" id="query"  style="font-family: 'Purisa'">GO</button>
   <br/>
@@ -63,13 +65,10 @@ function getTodaysDate(){
 <div class="boxed" id="arrbox" style="font-family: 'Purisa';border:1px dotted black;padding:1em; width:40%; float:left;">
 </div>
 <br>
-<br>
-<br>
-<br>
-<div class="boxed" id="cancellation" style="color:red;font-family: 'Purisa';border:1px dotted black;padding:1em;width:100%;">
+<div class="boxed" id="cancellation" style="color:red;font-family: 'Purisa';border:1px dotted black;padding:1em;width:100%;float:left;">
 </div>
 <br>
-<div class="boxed" id="delay"  style="color:red;font-family: 'Purisa';border:1px dotted black;padding:1em;width:100%;">
+<div class="boxed" id="delay"  style="color:red;font-family: 'Purisa';border:1px dotted black;padding:1em;width:100%;float:left;">
 </div>
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
 <script type="text/javascript">  
@@ -104,6 +103,7 @@ $("#loading-div-background").css({ opacity: 0.7 });
 $("#query").click(function() {  
 
   $("#loading-div-background").show();
+  $("#map-canvas").hide();
   $("#depwe").hide();
   $("#arrwe").hide();
   $("#cancellation").hide();
@@ -113,7 +113,8 @@ $("#query").click(function() {
   var arrival = $('input:text[name=arrival]').val();
   var depdate = $('input[name=depdate]').val();
   var deptime = $('input[name=deptime]').val();
-  var qu = {"departure":departure,"arrival":arrival,'depdate':depdate,'deptime':deptime}
+  var carrier = $('input[name=carrier]').val();
+  var qu = {"departure":departure,"arrival":arrival,'depdate':depdate,'deptime':deptime,'carrier':carrier}
   $.ajax({
     type: "POST",
     async:true,
@@ -158,7 +159,8 @@ $("#query").click(function() {
      var container = $("#delay");
      container.html(delay);
 
-     $("#loading-div-background").hide();      
+     $("#loading-div-background").hide();  
+     $("#map-canvas").show();    
      $("#depwe").show();
      $("#arrwe").show();
      $("#cancellation").show();
