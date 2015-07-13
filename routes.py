@@ -60,7 +60,8 @@ def predictFlightStatus(depid,arrid,depdate,deptime,carrier):
     disc_features = np.zeros(len(cat_keys))
     for entry in dep_disc_vector:
         found_ind = [e for e,x in enumerate(cat_keys) if entry==x]
-        disc_features[found_ind[0]]=1
+        if len(found_ind)>0:
+            disc_features[found_ind[0]]=1
     
     all_features=np.concatenate((dep_cont_we, arr_cont_we, disc_features), axis=1)
     # then inpute
@@ -81,9 +82,9 @@ def predictFlightStatus(depid,arrid,depdate,deptime,carrier):
     #
     prediction = np.dot(all_features,reg[0:all_features.shape[0]]) + reg[-1]
     if prediction>0:
-        delay=np.round(prediction/10)*10
+        delay=int(np.round(prediction/10)*10)
     else:
-        delay=0
+        delay=int(0)
     return depforetext,arrforetext,cancellation,delay
 
 
