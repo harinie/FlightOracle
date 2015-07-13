@@ -80,7 +80,10 @@ def predictFlightStatus(depid,arrid,depdate,deptime,carrier):
     
     #
     prediction = np.dot(all_features,reg[0:all_features.shape[0]]) + reg[-1]
-    delay=int(prediction)
+    if prediction>0:
+        delay=int(prediction)
+    else:
+        delay=0
     return depforetext,arrforetext,cancellation,delay
 
 
@@ -96,13 +99,29 @@ def query():
     data = json.loads(request.data)
     data['departure'] = data['departure'].upper()
     data['arrival'] = data['arrival'].upper()    
-    departure_id = np.where(airport_data["iata"]==data['departure'])[0][0]
-    arrival_id = np.where(airport_data["iata"]==data['arrival'])[0][0]    
+    departure_id = np.where(airport_data["iata"]==data['departure'])
+    arrival_id = np.where(airport_data["iata"]==data['arrival'])
+    
+    if departure_id[0].shape[0] == 0:
+        return jsonify(deplat=0,deplong=0, arrlat=0,arrlong=0,
+                    depwe="Departure airport not found",
+                    arrwe="", cancellation="",delay="")
+    else:
+        departure_id = departure_id[0][0]
+        
+    if arrival_id[0].shape[0] == 0:
+        return jsonify(deplat=0,deplong=0, arrlat=0,arrlong=0,
+                    depwe="",
+                    arrwe="Arrival airport not found", cancellation="",delay="")
+    else:
+        arrival_id = arrival_id[0][0]    
+        
     depwe,arrwe,cancellation,delay = predictFlightStatus(departure_id,arrival_id,data['depdate'],data['deptime'],data['carrier'])
     return jsonify(deplat=airport_data.ix[departure_id]["lat"],deplong=airport_data.ix[departure_id]["long"],
                    arrlat=airport_data.ix[arrival_id]["lat"],arrlong=airport_data.ix[arrival_id]["long"],
-                    depwe="Weather at departure: "+depwe,arrwe="Weather at arrival: "+arrwe,
-                    cancellation="Chance of cancellation: "+str(cancellation)+'%',delay="Expected delay: "+str(delay)+'min')
+                    depwe="Weather at "+airport_data.ix[departure_id]["city"]+","+airport_data.ix[departure_id]["state"]+": "+depwe,
+                    arrwe="Weather at "+airport_data.ix[arrival_id]["city"]+","+airport_data.ix[arrival_id]["state"]+": "+arrwe,
+                    cancellation="Chance of cancellation: "+str(cancellation)+'%',delay="Expected delay: "+str(delay)+' minutes')
     
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

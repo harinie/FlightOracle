@@ -37,19 +37,19 @@ function getTodaysDate(){
 }
 </script>
 <div id="sidebar">
-  <span  style="font-family: 'Purisa'">Input Flight Information</span>
+  <span  style="font-family: 'Purisa'">Input Flight Info</span>
   <br/>
-  <input type="text" name="departure" value="PHL" size=10  style="font-family: 'Purisa'"></input>
+  <input type="text" name="departure" value="PHL" size=10  style="font-family: 'Purisa'"></input> 
   <br/>
-  <input type="text" name="arrival" value="ORD" size=10  style="font-family: 'Purisa'"></input>
+  <input type="text" name="arrival" value="ORD" size=10  style="font-family: 'Purisa'"></input> 
   <br/>
   <input type="date" name="depdate" oninput="validDate(this.value, this)" style="font-family: 'Purisa'"></input>
   <br/>
-  <input type="time" name="deptime" value="12:00:AM/PM" style="font-family: 'Purisa'"></input>
+  <input type="time" name="deptime" value="20:00" style="font-family: 'Purisa'"></input>
   <br/>
-  <input type="text" name="carrier" value="US" style="font-family: 'Purisa'"></input>
+  <input type="text" name="carrier" value="AA" style="font-family: 'Purisa'"></input> 
   <br/>
-  <button type="button" id="query"  style="font-family: 'Purisa'">GO</button>
+  <button type="button" id="query"  style="font-family: 'Purisa'">GO</button> 
   <br/>
 </div>
 <div id="loading-div-background">
@@ -60,15 +60,15 @@ function getTodaysDate(){
 </div>
 <div id="map-canvas"  style="margin:0 auto; padding: 0 auto; width:60%; height:400px;"></div>
 <br>
-<div class="boxed" id="depbox" style="font-family: 'Purisa';border:1px dotted black;padding:1em; width:40%; float:left;"> 
+<div class="boxed" id="depbox" style="font-family: 'Purisa';border:0px dotted black;padding:1em; width:40%; float:left;"> 
 </div>
-<div class="boxed" id="arrbox" style="font-family: 'Purisa';border:1px dotted black;padding:1em; width:40%; float:left;">
-</div>
-<br>
-<div class="boxed" id="cancellation" style="color:red;font-family: 'Purisa';border:1px dotted black;padding:1em;width:100%;float:left;">
+<div class="boxed" id="arrbox" style="font-family: 'Purisa';border:0px dotted black;padding:1em; width:40%; float:left;">
 </div>
 <br>
-<div class="boxed" id="delay"  style="color:red;font-family: 'Purisa';border:1px dotted black;padding:1em;width:100%;float:left;">
+<div class="boxed" id="cancellation" style="color:red;font-family: 'Purisa';font-weight: bold;border:0px dotted black;padding:1em;width:100%;float:left;">
+</div>
+<br>
+<div class="boxed" id="delay"  style="color:red;font-family: 'Purisa';font-weight: bold;border:0px dotted black;padding:1em;width:100%;float:left;">
 </div>
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
 <script type="text/javascript">  
