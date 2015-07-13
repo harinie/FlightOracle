@@ -81,7 +81,7 @@ def predictFlightStatus(depid,arrid,depdate,deptime,carrier):
     #
     prediction = np.dot(all_features,reg[0:all_features.shape[0]]) + reg[-1]
     if prediction>0:
-        delay=int(prediction)
+        delay=np.round(prediction/10)*10
     else:
         delay=0
     return depforetext,arrforetext,cancellation,delay
@@ -121,7 +121,7 @@ def query():
                    arrlat=airport_data.ix[arrival_id]["lat"],arrlong=airport_data.ix[arrival_id]["long"],
                     depwe="Weather at "+airport_data.ix[departure_id]["city"]+","+airport_data.ix[departure_id]["state"]+": "+depwe,
                     arrwe="Weather at "+airport_data.ix[arrival_id]["city"]+","+airport_data.ix[arrival_id]["state"]+": "+arrwe,
-                    cancellation="Chance of cancellation: "+str(cancellation)+'%',delay="Expected delay: "+str(delay)+' minutes')
+                    cancellation="Chance of cancellation: "+str(cancellation)+'%',delay="Expected delay: Around "+str(delay)+' minutes')
     
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
