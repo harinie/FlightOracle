@@ -79,12 +79,19 @@ def predictFlightStatus(depid,arrid,depdate,deptime,carrier):
     prediction = np.exp(-1.0*prediction)
     cancellation=int(100/(1+prediction))
     
-    #
-    prediction = np.dot(all_features,reg[0:all_features.shape[0]]) + reg[-1]
-    if prediction>0:
-        delay=int(np.round(prediction/10)*10)
-    else:
-        delay=int(0)
+    #now predict multi-class
+    predictions = np.zeros(6)
+    probabilities = np.zeros(6)
+    delay_vals = ['No Delay','Less than 30 min','Around 1 hr','Around 2 hrs','Around 3 hrs','Greater than 3 hrs']
+    for i in range(6):
+        predictions[i] = np.dot(all_features,reg[i*all_features.shape[0]:(i+1)*all_features.shape[0]]) + reg[i-6]
+        probabilities[i] = np.exp(-1.0*predictions[i])
+        probabilities[i] = 1/(1+probabilities[i])
+    
+    app.logger.debug(probabilities)
+    delay_ind = np.argmax(probabilities)
+    delay = delay_vals[delay_ind]
+
     return depforetext,arrforetext,cancellation,delay
 
 
@@ -122,7 +129,7 @@ def query():
                    arrlat=airport_data.ix[arrival_id]["lat"],arrlong=airport_data.ix[arrival_id]["long"],
                     depwe="Weather at "+airport_data.ix[departure_id]["city"]+","+airport_data.ix[departure_id]["state"]+": "+depwe,
                     arrwe="Weather at "+airport_data.ix[arrival_id]["city"]+","+airport_data.ix[arrival_id]["state"]+": "+arrwe,
-                    cancellation="Chance of cancellation: "+str(cancellation)+'%',delay="Expected delay: Around "+str(delay)+' minutes')
+                    cancellation="Chance of cancellation: "+str(cancellation)+'%',delay="Expected delay: "+delay)
     
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
